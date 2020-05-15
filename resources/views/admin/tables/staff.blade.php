@@ -59,7 +59,7 @@
         </tr>
     @empty
         <tr>
-            <td colspan="5">No Staff</td>
+            <td colspan="6" class="text-center">No Staff</td>
         </tr>
     @endforelse
     </tbody>

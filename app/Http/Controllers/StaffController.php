@@ -39,11 +39,11 @@ class StaffController extends Controller
     {
         $data = $request->validated();
 
-        $latestUserId = DB::selectOne('select id from users order by id desc')->id;
-        $latestStaffId = DB::selectOne('select id from staffs order by id desc');
+        $latestUserId = DB::selectOne('select id from users order by id desc')->id ?? 0;
+        $latestStaffId = DB::selectOne('select id from staffs order by id desc')->id ?? 0;
 
         $nextUserId = intval(substr($latestUserId, 1)) + 1;
-        $nextStaffId = intval(substr($latestStaffId->id, 2)) + 1;
+        $nextStaffId = intval(substr($latestStaffId, 2)) + 1;
 
         $user_id = sprintf('U%04d', $nextUserId);
         $staff_id = sprintf('ST%03d', $nextStaffId);
