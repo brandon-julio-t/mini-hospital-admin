@@ -47,23 +47,16 @@
                         </li>
                     @else
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->username }} <span class="caret"></span>
+                            <a class="nav-link" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
                             </a>
 
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
-                                </a>
-
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                      style="display: none;">
-                                    @csrf
-                                </form>
-                            </div>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                  style="display: none;">
+                                @csrf
+                            </form>
                         </li>
                     @endguest
                 </ul>
@@ -73,11 +66,13 @@
 
     <main class="py-4">
         @if (session('status'))
-            <div class="alert alert-success" role="alert">
-                {{ session('status') }}
+            <div class="container">
+                <div class="alert alert-primary" role="alert">
+                    {{ session('status') }}
+                </div>
             </div>
         @endif
-
+        
         @yield('content')
     </main>
 </div>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration
+class CreateReceiptHeadersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('receipt_headers', function (Blueprint $table) {
             $table->char('id', 5)->primary();
-            $table->string('username')->unique();
-            $table->string('password');
+            $table->char('registration_form_id', 5);
+            $table->timestamp('created_at');
+
+            $table->foreign('registration_form_id')->references('id')->on('registration_forms');
         });
     }
 
@@ -27,6 +29,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('receipt_headers');
     }
 }

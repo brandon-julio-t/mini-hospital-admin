@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -38,4 +40,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password'
     ];
+
+    public function isAdmin()
+    {
+        return DB::selectOne('select * from admins where user_id = ?', [Auth::id()]) !== null;
+    }
+
+    public function isStaff()
+    {
+        return DB::selectOne('select * from staffs where user_id = ?', [Auth::id()]) !== null;
+    }
 }

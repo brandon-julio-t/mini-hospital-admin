@@ -1,4 +1,4 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
     <div class="container">
@@ -21,9 +21,7 @@
                                            value="{{ old('username') }}" required autocomplete="name" autofocus>
 
                                     @error('username')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                    <app-alert message="{{ $message }}"></app-alert>
                                     @enderror
                                 </div>
                             </div>
@@ -38,16 +36,14 @@
                                            required autocomplete="current-password">
 
                                     @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                    <app-alert message="{{ $message }}"></app-alert>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="form-group row mb-0">
-                                <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
+                            <div class="form-group row justify-content-center">
+                                <div class="col-md-8">
+                                    <button type="submit" class="btn btn-block btn-outline-primary">
                                         {{ __('Login') }}
                                     </button>
                                 </div>
@@ -59,3 +55,10 @@
         </div>
     </div>
 @endsection
+<script>
+    import AppAlert from "../../js/components/AppAlert";
+
+    export default {
+        components: {AppAlert}
+    }
+</script>
