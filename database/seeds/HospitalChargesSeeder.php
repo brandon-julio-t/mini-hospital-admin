@@ -28,7 +28,7 @@ class HospitalChargesSeeder extends Seeder
 
         $table->insert([
             'id' => 'HC003',
-            'name' => 'Medication / Pharmacy Charges',
+            'name' => 'Medication/Pharmacy Charges',
             'amount' => 700000
         ]);
     }
