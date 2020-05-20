@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return DB::selectOne('select * from staffs where user_id = ?', [Auth::id()]) !== null;
     }
+
+    public function isDoctor()
+    {
+        return DB::selectOne('select * from doctors where user_id = ?', [Auth::id()]) !== null;
+    }
 }

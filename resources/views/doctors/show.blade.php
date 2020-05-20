@@ -28,7 +28,7 @@
                 </tr>
                 <tr>
                     <td>Salary</td>
-                    <td>{{ $doctor->salary }}</td>
+                    <td>{{ 'Rp' . number_format($doctor->salary, 2) }}</td>
                 </tr>
                 <tr>
                     <td>Address</td>
@@ -64,6 +64,8 @@
                         Delete
                     </button>
                 </form>
+            @else
+                <a href="{{ route('password.reset.form') }}" class="btn btn-block btn-outline-dark">Reset Password</a>
             @endif
         </div>
     </div>

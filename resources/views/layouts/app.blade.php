@@ -41,11 +41,7 @@
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
-                    @guest
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                    @else
+                    @auth
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
@@ -58,7 +54,7 @@
                                 @csrf
                             </form>
                         </li>
-                    @endguest
+                    @endauth
                 </ul>
             </div>
         </div>
@@ -67,12 +63,12 @@
     <main class="py-4">
         @if (session('status'))
             <div class="container">
-                <div class="alert alert-primary" role="alert">
+                <div class="alert alert-primary text-center" role="alert">
                     {{ session('status') }}
                 </div>
             </div>
         @endif
-        
+
         @yield('content')
     </main>
 </div>

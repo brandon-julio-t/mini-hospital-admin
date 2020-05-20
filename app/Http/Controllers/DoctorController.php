@@ -3,15 +3,72 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDoctor;
+use App\Http\Requests\StoreTreatment;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class DoctorController extends Controller
 {
+    public function treat($patient_id)
+    {
+        return view('doctors.treat')
+            ->with('patient', DB::selectOne('select * from patients where id = ?', [$patient_id]));
+    }
+
+    public function finishTreatment(StoreTreatment $request, $patient_id)
+    {
+        $data = $request->validated();
+
+        DB::transaction(function () use ($data, $patient_id) {
+            $receiptHeaderId = DB::selectOne("
+                select rh.id
+                from receipt_headers rh
+                     join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = 'PT001'
+            ")->id;
+
+            $medicines = collect($data['medicines'])->reject(function ($value, $key) {
+                return $value <= 0;
+            });
+            $medicineIds = $medicines->keys();
+
+            foreach ($medicineIds as $medicineId) {
+                DB::insert("
+                    insert into receipt_medicine_details
+                    values (:receipt_header_id, :medicine_id, :quantity)
+                ", [
+                    'receipt_header_id' => $receiptHeaderId,
+                    'medicine_id' => $medicineId,
+                    'quantity' => $medicines->get($medicineId),
+                ]);
+            }
+
+            $doctorCharges = collect($data['charges']);
+            $doctorChargeIds = $doctorCharges->keys();
+
+            foreach ($doctorChargeIds as $doctorChargeId) {
+                DB::insert("
+                    insert into receipt_doctor_details
+                    values (:receipt_header_id, :doctor_charge_id)
+                ", [
+                    'receipt_header_id' => $receiptHeaderId,
+                    'doctor_charge_id' => $doctorChargeId,
+                ]);
+            }
+        });
+
+        return redirect()->route('home')->with('status', 'Patient treated');
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -21,7 +78,7 @@ class DoctorController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function create()
     {
@@ -31,8 +88,8 @@ class DoctorController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param StoreDoctor $request
+     * @return RedirectResponse
      */
     public function store(StoreDoctor $request)
     {
@@ -82,7 +139,7 @@ class DoctorController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function show($id)
     {
@@ -94,7 +151,7 @@ class DoctorController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function edit($id)
     {
@@ -105,9 +162,9 @@ class DoctorController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreDoctor $request
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(StoreDoctor $request, $id)
     {
@@ -141,7 +198,7 @@ class DoctorController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy($id)
     {

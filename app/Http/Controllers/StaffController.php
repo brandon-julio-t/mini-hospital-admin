@@ -2,17 +2,142 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FinalizeReceipt;
 use App\Http\Requests\StoreStaff;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class StaffController extends Controller
 {
+    public function finalizePreparation($patient_id)
+    {
+        if (!auth()->user()->isStaff()) {
+            return response(null, 403);
+        }
+
+        return view('staffs.finalize')
+            ->with('patient', DB::selectOne('select * from patients where id = ?', [$patient_id]))
+            ->with('doctor', DB::selectOne('
+                select d.name as name
+                from doctors d
+                         join registration_forms rf on d.id = rf.doctor_id
+                where rf.patient_id = ?
+            ', [$patient_id]))
+            ->with('hospitalCharges', DB::select('select * from hospital_charges'));
+    }
+
+    public function finalizeReceipt(FinalizeReceipt $request, $patient_id)
+    {
+        $data = $request->validated();
+
+        DB::transaction(function () use ($data, $patient_id) {
+            DB::update("
+                update receipt_headers
+                set finalized_at = :timestamp
+                where registration_form_id = (select rf.id
+                                              from receipt_headers rh
+                                                       join registration_forms rf on rh.registration_form_id = rf.id
+                                              where rf.patient_id = :patient_id)
+            ", [
+                'timestamp' => now(),
+                'patient_id' => $patient_id,
+            ]);
+
+            $receipt_id = DB::selectOne('
+                select rh.id
+                from receipt_headers rh
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id])->id;
+
+            foreach (collect($data['hospitalCharges'])->keys() as $hospitalChargeId) {
+                DB::insert("
+                    insert into receipt_hospital_details
+                    values (:receipt_id, :hospital_charge_id)
+                ", [
+                    'receipt_id' => $receipt_id,
+                    'hospital_charge_id' => $hospitalChargeId,
+                ]);
+            }
+        });
+
+        return redirect()->route('home')->with('status', 'Patient receipt finalized');
+    }
+
+    public function viewReceipt($patient_id)
+    {
+        return view('staffs.receipt')
+            ->with('patient', DB::selectOne('select * from patients where id = ?', [$patient_id]))
+            ->with('medicines', DB::select('
+                select m.name, m.disease, m.type, rmd.quantity
+                from medicines m
+                         join receipt_medicine_details rmd on m.id = rmd.medicine_id
+                         join receipt_headers rh on rmd.receipt_id = rh.id
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('doctor', DB::selectOne('
+                select d.name
+                from doctors d
+                         join registration_forms rf on d.id = rf.doctor_id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('hospitalCharges', DB::select('
+                select hc.name, hc.amount
+                from hospital_charges hc
+                         join receipt_hospital_details rhd on hc.id = rhd.hospital_charge_id
+                         join receipt_headers rh on rhd.receipt_id = rh.id
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('doctorCharges', DB::select('
+                select dc.name, dc.amount
+                from doctor_charges dc
+                         join receipt_doctor_details rdd on dc.id = rdd.doctor_charge_id
+                         join receipt_headers rh on rdd.receipt_id = rh.id
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('staff', DB::selectOne('
+                select s.name
+                from staffs s
+                         join registration_forms rf on s.id = rf.staff_id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('receipt', DB::selectOne('
+                select rf.created_at, rh.finalized_at
+                from receipt_headers rh
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('hospitalChargeSubtotal', DB::selectOne('
+                select sum(hc.amount) as subtotal
+                from hospital_charges hc
+                         join receipt_hospital_details rhd on hc.id = rhd.hospital_charge_id
+                         join receipt_headers rh on rhd.receipt_id = rh.id
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id]))
+            ->with('doctorChargeSubtotal', DB::selectOne('
+                select sum(dc.amount) as subtotal
+                from doctor_charges dc
+                         join receipt_doctor_details rhd on dc.id = rhd.doctor_charge_id
+                         join receipt_headers rh on rhd.receipt_id = rh.id
+                         join registration_forms rf on rh.registration_form_id = rf.id
+                where patient_id = ?
+            ', [$patient_id]))
+            ;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -22,7 +147,7 @@ class StaffController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function create()
     {
@@ -82,7 +207,7 @@ class StaffController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function show($id)
     {
@@ -93,7 +218,7 @@ class StaffController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function edit($id)
     {

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,23 +18,21 @@ Auth::routes(['register' => false, 'auth.reset' => false]);
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', function () {
-        if (Auth::user()->isAdmin()) {
-            return view('admin.dashboard');
-        }
-
-        if (Auth::user()->isStaff()) {
-            $staff = DB::selectOne("select * from staffs where user_id = ?", [Auth::id()]);
-            return view('staffs.show')->with('staff', $staff);
-        }
-
-        return response()->setStatusCode(403);
-    })->name('home');
+    Route::view('/', 'dashboard')->name('home');
 
     Route::get('password/reset', 'PasswordController@show')->name('password.reset.form');
     Route::put('password/reset', 'PasswordController@update')->name('password.update');
 
+    Route::get('treat/{patient_id}', 'DoctorController@treat')->name('treat.patient');
+    Route::post('treat/{patient_id}', 'DoctorController@finishTreatment')->name('treat.patient.finish');
+
+    Route::get('treat/{patient_id}/finalize', 'StaffController@finalizePreparation')->name('patient.finalize.preparation');
+    Route::post('treat/{patient_id}/finalize', 'StaffController@finalizeReceipt')->name('patient.finalize');
+
+    Route::get('receipt/{patient_id}', 'StaffController@viewReceipt')->name('receipt');
+
     Route::resource('staffs', 'StaffController');
     Route::resource('doctors', 'DoctorController');
+    Route::resource('patients', 'PatientController');
 
 });

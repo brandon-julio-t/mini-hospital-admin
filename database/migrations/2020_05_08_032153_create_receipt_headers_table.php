@@ -16,7 +16,7 @@ class CreateReceiptHeadersTable extends Migration
         Schema::create('receipt_headers', function (Blueprint $table) {
             $table->char('id', 5)->primary();
             $table->char('registration_form_id', 5);
-            $table->timestamp('created_at');
+            $table->timestamp('finalized_at')->nullable();
 
             $table->foreign('registration_form_id')->references('id')->on('registration_forms');
         });

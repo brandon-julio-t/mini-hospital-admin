@@ -2,44 +2,42 @@
 
 @section('body')
     <div class="card">
-        <div class="card-header">{{ $staff->id }}</div>
+        <div class="card-header">{{ $patient->id }}</div>
 
-        <section class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <tr>
-                        <td>Name</td>
-                        <td>{{ $staff->name }}</td>
-                    </tr>
-                    <tr>
-                        <td>Phone Number</td>
-                        <td>{{ $staff->phone_number }}</td>
-                    </tr>
-                    <tr>
-                        <td>Date of Birth</td>
-                        <td>{{ $staff->date_of_birth }}</td>
-                    </tr>
-                    <tr>
-                        <td>Role</td>
-                        <td>{{ $staff->role }}</td>
-                    </tr>
-                    <tr>
-                        <td>Salary</td>
-                        <td>{{ 'Rp' . number_format($staff->salary, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Address</td>
-                        <td>{{ $staff->address }}</td>
-                    </tr>
-                </table>
-            </div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover">
+                <tr>
+                    <td>Name</td>
+                    <td>{{ $patient->name }}</td>
+                </tr>
+                <tr>
+                    <td>Phone Number</td>
+                    <td>{{ $patient->phone_number }}</td>
+                </tr>
+                <tr>
+                    <td>Date of Birth</td>
+                    <td>{{ $patient->date_of_birth }}</td>
+                </tr>
+                <tr>
+                    <td>Role</td>
+                    <td>{{ $patient->role }}</td>
+                </tr>
+                <tr>
+                    <td>Salary</td>
+                    <td>{{ 'Rp' . number_format($patient->salary, 2) }}</td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>{{ $patient->address }}</td>
+                </tr>
+            </table>
 
             @if(Auth::user()->isAdmin())
-                <form action="{{ route('staffs.destroy', $staff->id) }}" method="POST">
+                <form action="{{ route('patients.destroy', $patient->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
 
-                    <a href="{{ route('staffs.edit', $staff->id) }}" class="btn btn-block btn-outline-dark">
+                    <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-block btn-outline-dark">
                         <svg class="bi bi-pencil" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
                              xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd"
@@ -65,6 +63,6 @@
             @else
                 <a href="{{ route('password.reset.form') }}" class="btn btn-block btn-outline-dark">Reset Password</a>
             @endif
-        </section>
+        </div>
     </div>
 @endsection

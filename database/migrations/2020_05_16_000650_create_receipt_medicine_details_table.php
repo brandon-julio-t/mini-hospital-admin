@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReceiptDetailsTable extends Migration
+class CreateReceiptMedicineDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateReceiptDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('receipt_details', function (Blueprint $table) {
-            $table->char('hospital_charge_id', 5);
+        Schema::create('receipt_medicine_details', function (Blueprint $table) {
+            $table->char('receipt_id', 5);
             $table->char('medicine_id', 5);
-            $table->char('doctor_charge_id', 5);
+            $table->integer('quantity');
 
-            $table->foreign('hospital_charge_id')->references('id')->on('hospital_charges');
+            $table->foreign('receipt_id')->references('id')->on('receipt_headers');
             $table->foreign('medicine_id')->references('id')->on('medicines');
-            $table->foreign('doctor_charge_id')->references('id')->on('doctor_charges');
         });
     }
 
@@ -31,6 +30,6 @@ class CreateReceiptDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('receipt_details');
+        Schema::dropIfExists('receipt_medicine_details');
     }
 }

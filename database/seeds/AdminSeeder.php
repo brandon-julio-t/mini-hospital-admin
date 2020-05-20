@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
         ]);
 
         DB::table('admins')->insert([
-            'id' => 'AD001',
+            'id' => 'ADM01',
             'user_id' => 'U0001',
         ]);
     }

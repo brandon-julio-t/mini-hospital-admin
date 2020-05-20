@@ -23,7 +23,7 @@ class MedicineSeeder extends Seeder
         ]);
 
         $table->insert([
-            'id' => 'MD001',
+            'id' => 'MD002',
             'supplier_id' => 'SU002',
             'disease' => 'Infection',
             'name' => 'Betadine',
@@ -31,7 +31,7 @@ class MedicineSeeder extends Seeder
         ]);
 
         $table->insert([
-            'id' => 'MD001',
+            'id' => 'MD003',
             'supplier_id' => 'SU003',
             'disease' => 'Diarrhea',
             'name' => 'Entrostop',
@@ -39,7 +39,7 @@ class MedicineSeeder extends Seeder
         ]);
 
         $table->insert([
-            'id' => 'MD001',
+            'id' => 'MD004',
             'supplier_id' => 'SU004',
             'disease' => 'Mag',
             'name' => 'Mylanta',
@@ -47,7 +47,7 @@ class MedicineSeeder extends Seeder
         ]);
 
         $table->insert([
-            'id' => 'MD001',
+            'id' => 'MD005',
             'supplier_id' => 'SU005',
             'disease' => 'Diabetes',
             'name' => 'Insulin',
