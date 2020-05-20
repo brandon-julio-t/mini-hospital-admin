@@ -18,7 +18,7 @@ Auth::routes(['register' => false, 'auth.reset' => false]);
 
 Route::middleware('auth')->group(function () {
 
-    Route::view('/', 'dashboard')->name('home');
+    Route::get('/', 'DashboardController')->name('home');
 
     Route::get('password/reset', 'PasswordController@show')->name('password.reset.form');
     Route::put('password/reset', 'PasswordController@update')->name('password.update');
@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::post('treat/{patient_id}/finalize', 'StaffController@finalizeReceipt')->name('patient.finalize');
 
     Route::get('receipt/{patient_id}', 'StaffController@viewReceipt')->name('receipt');
+
+    Route::get('patients/finalized', 'PatientController@finalized')->name('patients.finalized');
 
     Route::resource('staffs', 'StaffController');
     Route::resource('doctors', 'DoctorController');

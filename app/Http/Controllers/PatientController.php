@@ -15,6 +15,16 @@ use Illuminate\View\View;
 
 class PatientController extends Controller
 {
+    public function finalized()
+    {
+        if (!auth()->user()->isStaff())
+        {
+            return response(null, 403);
+        }
+
+        return view('patients.finalized');
+    }
+
     /**
      * Display a listing of the resource.
      *

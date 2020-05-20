@@ -68,11 +68,15 @@ class DoctorController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return Application|Factory|View
      */
     public function index()
     {
-        return response(null, 501);
+        if (!auth()->user()->isAdmin()) {
+            return response(null, 403);
+        }
+
+        return view('doctors.index');
     }
 
     /**
