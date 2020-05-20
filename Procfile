@@ -1,2 +1,2 @@
-web: php artisan migrate
+web: php artisan migrate:fresh --seed
 web: vendor/bin/heroku-php-apache2 public/
