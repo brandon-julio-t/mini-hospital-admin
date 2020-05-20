@@ -22,10 +22,13 @@
                   and p.id in (select patient_id
                                from registration_forms rf
                                         join receipt_headers rh on rf.id = rh.registration_form_id
-                                        join receipt_doctor_details rdd on rh.id = rdd.receipt_id
                                where rh.finalized_at is null
-                               group by patient_id
-                               having count(rdd.doctor_charge_id) = 0)
+                               group by patient_id)
+                  and (select count(*)
+                       from receipt_doctor_details rdd
+                                join receipt_headers r on rdd.receipt_id = r.id
+                                join registration_forms f on r.registration_form_id = f.id
+                       where f.patient_id = p.id) = 0
             ', [$doctor->id]) as $patient)
                 <tr>
                     <th scope="row" class="align-middle">{{ $patient->patient_id }}</th>
@@ -45,16 +48,3 @@
         </table>
     </div>
 </section>
-
-<div class="row justify-content-center">
-    <div class="col">
-        <a href="{{ route('doctors.show', $doctor->id) }}" class="btn btn-block btn-outline-dark">
-            View Profile
-        </a>
-    </div>
-    <div class="col">
-        <a href="{{ route('patients.create') }}" class="btn btn-block btn-outline-primary">
-            Register New Patient
-        </a>
-    </div>
-</div>

@@ -45,11 +45,13 @@ class PatientController extends Controller
     {
         $patientData = $request->validated();
 
-        $latestPatientId = DB::selectOne('select id from patients order by id desc')->id ?? 0;
-        $latestRegistrationFormId = DB::selectOne('select id from registration_forms order by id desc')->id ?? 0;
+        $latestPatientId = intval(DB::selectOne('select right(id, 3) as id from patients order by id desc')->id ?? 0);
+        $latestRegistrationFormId = intval(DB::selectOne('select right(id, 4) as id from registration_forms order by id desc')->id ?? 0);
+        $latestReceiptHeaderId = intval(DB::selectOne('select right(id, 4)  as id from receipt_headers order by id desc')->id ?? 0);
 
         $nextPatientId = sprintf('PT%03d', $latestPatientId + 1);
         $nextRegistrationFormId = sprintf('F%04d', $latestRegistrationFormId + 1);
+        $nextReceiptHeaderId = sprintf('R%04d', $latestReceiptHeaderId + 1);
 
         $currentStaffId = DB::selectOne('select id from staffs where user_id = ?', [Auth::id()])->id;
 
@@ -76,6 +78,15 @@ class PatientController extends Controller
             'patient_id' => $nextPatientId,
             'staff_id' => $currentStaffId,
             'created_at' => Carbon::now()
+        ]);
+
+        DB::insert('
+            insert into receipt_headers
+            values (:id, :registration_form_id, :finalized_at)
+        ', [
+            'id' => $nextRegistrationFormId,
+            'registration_form_id' => $nextRegistrationFormId,
+            'finalized_at' => null,
         ]);
 
         DB::commit();

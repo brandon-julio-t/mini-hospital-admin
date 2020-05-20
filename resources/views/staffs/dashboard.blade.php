@@ -26,11 +26,13 @@
                 where p.id in (select patient_id
                                from registration_forms rf
                                         join receipt_headers rh on rf.id = rh.registration_form_id
-                                        join receipt_medicine_details rmd on rh.id = rmd.receipt_id
-                                        join receipt_doctor_details rdd on rh.id = rdd.receipt_id
                                where rh.finalized_at is null
-                               group by patient_id
-                               having count(rdd.doctor_charge_id) = 0)
+                               group by patient_id)
+                  and (select count(*)
+                       from receipt_doctor_details rdd
+                                join receipt_headers r on rdd.receipt_id = r.id
+                                join registration_forms f on r.registration_form_id = f.id
+                       where f.patient_id = p.id) = 0
             ') as $patient)
                 <tr>
                     <th scope="row">{{ $patient->patient_id }}</th>
@@ -95,7 +97,7 @@
 </section>
 
 <section class="my-5">
-    <h2>Treated Patient</h2>
+    <h2>Finalized Patient</h2>
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>

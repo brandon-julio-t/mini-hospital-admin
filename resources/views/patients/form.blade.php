@@ -19,13 +19,19 @@
         <label for="gender" class="col-sm-3 col-form-label pt-0">Sex</label>
         <div class="col-sm-9">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="sex" id="male" value="Male">
+                <input class="form-check-input @error('sex') is-invalid @enderror" type="radio" name="sex" id="male"
+                       value="Male">
                 <label class="form-check-label" for="male">Male</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="sex" id="female" value="Female">
+                <input class="form-check-input @error('sex') is-invalid @enderror" type="radio" name="sex" id="female"
+                       value="Female">
                 <label class="form-check-label" for="female">Female</label>
             </div>
+
+            @error('sex')
+            <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
     </div>
 

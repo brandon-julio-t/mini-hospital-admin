@@ -29,8 +29,8 @@ class DoctorController extends Controller
                 select rh.id
                 from receipt_headers rh
                      join registration_forms rf on rh.registration_form_id = rf.id
-                where patient_id = 'PT001'
-            ")->id;
+                where patient_id = ?
+            ", [$patient_id])->id;
 
             $medicines = collect($data['medicines'])->reject(function ($value, $key) {
                 return $value <= 0;
