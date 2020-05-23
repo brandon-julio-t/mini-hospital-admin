@@ -60,9 +60,11 @@
                 <div class="input-group-prepend">
                     <div class="input-group-text">Rp</div>
                 </div>
-                <input type="number" step="any" class="form-control @error('salary') is-invalid @enderror" id="salary"
-                       name="salary" value="{{ old('salary') ?? $staff->salary ?? '' }}" required>
+                <input v-model="nominal" aria-describedby="salaryHelp" type="number" step="100000"
+                       class="form-control @error('salary') is-invalid @enderror" id="salary" name="salary"
+                       value="{{ old('salary') ?? $staff->salary ?? '' }}" required>
             </div>
+            <small id="salaryHelp" class="ml-5 form-text text-muted" v-text="localeNominal"></small>
 
             @error('salary')
             <app-alert message="{{ $message }}"></app-alert>

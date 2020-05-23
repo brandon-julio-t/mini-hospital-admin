@@ -40,10 +40,15 @@
                             </div>
 
                             <div class="form-group row justify-content-center mb-0">
-                                <div class="col-md-8">
+                                <div class="col">
                                     <button type="submit" class="btn btn-block btn-outline-primary">
                                         {{ __('Reset Password') }}
                                     </button>
+                                </div>
+                                <div class="col">
+                                    <a href="{{ route('home') }}" class="btn btn-block btn-outline-dark">
+                                        Back
+                                    </a>
                                 </div>
                             </div>
                         </form>
