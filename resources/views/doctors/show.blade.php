@@ -2,10 +2,21 @@
 
 @section('body')
     <div class="card">
-        <div class="card-header">{{ $doctor->id }}</div>
+        <div class="card-header">
+            <a href="{{ route('doctors.index') }}" class="btn d-flex align-items-center">
+                <svg class="bi bi-chevron-left" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                </svg>
+                Back
+            </a>
+        </div>
 
         <div class="card-body table-responsive">
             <table class="table table-hover">
+                <tr>
+                    <td>ID</td>
+                    <td>{{ $doctor->id }}</td>
+                </tr>
                 <tr>
                     <td>Name</td>
                     <td>{{ $doctor->name }}</td>

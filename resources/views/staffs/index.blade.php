@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('dashboard')
-    <section>
+    <section class="table-responsive">
         <h2>Manage Staffs</h2>
 
         <table class="table table-hover">
