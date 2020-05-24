@@ -76,8 +76,14 @@
                     </button>
                 </form>
             @else
-                <a href="{{ route('password.reset.form') }}" class="btn btn-block btn-outline-dark">Reset Password</a>
-                <a href="{{ route('home') }}" class="btn btn-block btn-outline-secondary">Return</a>
+                <div class="row">
+                    <div class="col">
+                        <a href="{{ route('password.reset.form') }}" class="btn btn-block btn-outline-dark">Reset Password</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ route('home') }}" class="btn btn-block btn-outline-secondary">Return</a>
+                    </div>
+                </div>
             @endif
         </div>
     </div>
