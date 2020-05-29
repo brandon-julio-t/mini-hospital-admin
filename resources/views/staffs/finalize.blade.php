@@ -57,9 +57,18 @@
                     @endforelse
 
 
-                    <button type="submit" class="btn btn-block btn-outline-dark mt-3">
-                        Submit
-                    </button>
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" class="btn btn-block btn-outline-dark mt-3">
+                                Submit
+                            </button>
+                        </div>
+                        <div class="col">
+                            <a href="{{ route('home') }}" class="btn btn-block btn-outline-danger mt-3">
+                                Return
+                            </a>
+                        </div>
+                    </div>
                 </form>
             </section>
         </div>
